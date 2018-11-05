@@ -153,8 +153,8 @@ setTimeout(getRiders, 100,'3069', 0);
     <option value='1'>2016-08-18</option>
  </select>
 
-<input type='button' value='Compile Data' style='font-size:22px' onclick="getRiders(document.getElementById('station').value, document.getElementById('date').value)"><br /><br />
-<div id='prog' style="display:none"><h3>Please wait! I am working hard to retrieve the data. <progress></progress></h3></div>
+<input type='button' value='Compile Data' style='font-size:16px' onclick="getRiders(document.getElementById('station').value, document.getElementById('date').value)"><br /><br />
+<div id='prog' style="display:none"><h2>Please wait! I am working hard to retrieve the data. <progress></progress></h3></div>
 
 <canvas id="stationRiders" ></canvas>
 <div id='res'>Note: The <font style='color:#A04000;font-weight:bolder'>brown line</font> indicates the cumulated net change of the bike in the station. <br />
@@ -174,16 +174,16 @@ A negative number means the inventory of bikes in the station is reduced.<br />
 		border:1px solid #d3d3d3;
 	}
   select{
-    font-size:25px;
+    font-size:16px;
     color:blue;
-    font-weight:bold;
+    
   }
   .data{
-	  font-size:25px;
+	  font-size:16px;
 	  color: black;
   }
   .info{
-	  font-size:20px;
+	  font-size:16px;
 	  color:red;
 	  text-decoration:underline;
   }
@@ -196,4 +196,10 @@ A negative number means the inventory of bikes in the station is reduced.<br />
   table th, td{
 	  border-bottom:1px solid;
   }
+   body,
+  h2{
+    font-family: Arial, Helvetica, sans-serif;    
+    font-size: 16px;
+    color: #3F3F44;    
+}
 </style>
