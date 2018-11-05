@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META HTTP-EQUIV="expires" CONTENT="0">
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
+<title>Bike Share</title>
+
+<script>
+
+  function top10StationList(opt){ 
+	  switch(parseInt(opt)){
+		  case 0: document.getElementById("res").innerHTML=''; break;
+		  case 1: displayPopularStationTable(dataStartingStation, 1); break;
+		  case 2: displayPopularStationTable(dataEndingStation,2); break;
+	  }
+  }
+ var dataStartingStation="132408:::3069:5138::3030:5059::3005:4883::3064:4661::3031:4629::3014:4571::3042:4015::3082:3908::3022:3893::3067:3797";
+ var dataEndingStation="132331:::3005:6262::3031:5517::3014:5385::3042:5293::3069:5072::3082:4703::3064:4605::3022:4337::3030:4224::3063:3763"
+ function displayPopularStationTable(data, t){
+	  var tmp="";
+	  data=data.split(":::");
+	  var totalCount=1*data[0];
+	  var cum=0;
+	  tmp ="<h2>Total <u>"+ (t==1?"<font color='red'>STARTING":"<font color='blue'>ENDING")+"</font></u> stations visited: "+ totalCount +"</h1>";
+	  tmp += "<h1>Top 10 Station List:</h1>"+
+			 "<table ><tr><th></th><th>Station ID</th><th>Frequency</th><th>%</th></tr>";
+	  data=data[1].split("::");
+	  for(var i=0; i<data.length-1; i++){
+		 var info=data[i].split(":");
+		 cum += 1*info[1];
+		 tmp += "<tr><td>"+ (i+1)+"</td><td>"+info[0]+"</td><td>"+info[1]+"</td><td>";
+		 var percent=100.0*info[1]/totalCount;
+		 tmp += percent.toFixed(2)+"</td></tr>";
+	   }
+	  tmp += "<tr><td></td><td>All others</td><td>"+(totalCount-cum)+"</td><td>"+((100.0*(totalCount-cum)/totalCount).toFixed(2))+"</td></tr>";
+	  tmp += "</table>";
+          document.getElementById("res").innerHTML=tmp;
+ }
+</script>
+
+</head> 
+<body>
+<h2><a href='datavisuals.html'>Data Visuals</a> | Popular Stations | <a href='averagedistance.html'>Average Distance</a> | <a href='commute.html'>Commute with Bikeshare</a>|<a href='stationanalysis.html'>Net Change of Bikes</a></h2>
+<select onchange="top10StationList(this.value)">
+  <option value='0'>Select Stations Type</option>
+  <option value='1'>Top 10 Popular Starting Stations</option>
+  <option value='2'>Top 10 Popular Ending Stations</option>
+</select>
+
+<div id="res">
+
+</div>
+
+</body>
+</html>
+
+<style>
+
+  table th{
+      //width:50px;
+      font-size:25px;
+  }
+  table td{
+     font-size:25px;
+     text-align:center;
+  }
+  select{
+    font-size:25px;
+    color:blue;
+    font-weight:bold;
+  }
+</style>

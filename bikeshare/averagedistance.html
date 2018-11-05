@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META HTTP-EQUIV="expires" CONTENT="0">
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
+<title>Bike Share</title>
+
+<script>
+  var passHolder=['All passholder types','Flex Pass','Monthly Pass','Staff Annual','Walk-up'];
+  var routeCat=['Both One Way and Round Trip','One Way', 'Round Trip'];
+  var averageData=[[1788,1541,1239,1051,2941],[1181,1269,1127,1034,1283],[7423,6586,3507,1097,9286]];
+  function averageDistance(routeCategory,passHolderType){
+	document.getElementById("holder").innerHTML=passHolder[passHolderType];
+	document.getElementById("route").innerHTML=routeCat[routeCategory];
+	document.getElementById("average").innerHTML=averageData[routeCategory][passHolderType]+" Meters.";
+}
+setTimeout(averageDistance, 100, 0,0);
+</script>
+</head> 
+<body>
+<h2><a href='datavisuals.html'>Data Visuals</a> | <a href='stationpopular.html'>Popular Stations</a> | Average Distance | <a href='commute.html'>Commute with Bikeshare</a>|<a href='stationanalysis.html'>Net Change of Bikes</a></h2>
+<hr size='2px'>
+<div class='data' title='1. For round trip, average speed 2.1M/S (base on the mode from the first 100 one-way
+2. Invalid data are not included.'>Average distance traveled: <span id='avgdistance'>1788</span> Meters</div>
+<br /><div class='info'>You may check average distance traveled by passholder type and route category</div><br />
+<select id='holderType'>
+  <option value='0'>All Passholder Types</option>
+  <option value='1'>Flex Pass</option>
+  <option value='2'>Monthly Pass</option>
+  <option value='3'>Staff Annual</option>
+  <option value='4'>Walk-up</option>
+</select>
+
+<select id='tripCategory'>
+  <option value='0'>All Trip Route Categories</option>
+  <option value='1'>One Way</option>
+  <option value='2'>Round Trip</option>
+</select>
+
+<input type='button' value='Compile Data' style='font-size:22px' onclick="averageDistance(document.getElementById('tripCategory').value, document.getElementById('holderType').value)"><br /><br />
+
+<div id="res" style='width:600px;'>
+   <table cellspacing="0" cellpadding="0" align="center">
+      <tr><th colspan="2">Average Distance Travelled by</th></tr>
+      <tr><th>PassHolder Type</th><th style='border-left:1px solid'>Route Category</th></tr>
+      <tr><th><span id='holder'></span></th><th style='border-left:1px solid'><span id='route'></span></th></tr>
+      <tr><th colspan="2"><span id='average'></span></th></tr>
+   </table>
+</div>
+
+</body>
+</html>
+
+
+
+<style>
+  select{
+    font-size:25px;
+    color:blue;
+    font-weight:bold;
+  }
+  .data{
+	  font-size:25px;
+	  color: black;
+  }
+  .info{
+	  font-size:20px;
+	  color:red;
+	  text-decoration:underline;
+  }
+  #res{
+	  font-size:30px;
+  }
+  table th{
+	  padding:5px;
+	  font-size:25px;
+	  border-bottom:1px solid;
+  }
+</style>

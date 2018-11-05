@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META HTTP-EQUIV="expires" CONTENT="0">
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
+<title>Bike Share</title>
+
+<script>
+var s3069=['0:0:0::1:0:0::2:0:0::3:0:0::4:0:0::5:0:0::6:0:0::7:0:0::8:2:0::9:1:1::10:2:0::11:0:0::12:1:1::13:4:2::14:1:3::15:0:1::16:5:1::17:4:0::18:0:2::19:1:4::20:2:1::21:0:0::22:0:0::23:0:0',
+           '0:0:0::1:0:0::2:0:0::3:0:0::4:0:0::5:0:1::6:0:0::7:1:1::8:1:1::9:2:0::10:2:1::11:3:1::12:1:2::13:2:1::14:1:4::15:0:1::16:3:0::17:1:0::18:10:3::19:2:7::20:5:1::21:0:2::22:2:0::23:0:0'];
+var s3005=['0:0:0::1:0:0::2:0:0::3:0:0::4:1:0::5:0:0::6:0:1::7:1:2::8:1:4::9:1:3::10:2:1::11:0:1::12:2:3::13:1:0::14:0:0::15:1:1::16:0:2::17:3:2::18:3:2::19:7:3::20:2:0::21:0:1::22:0:0::23:1:0',
+           '0:0:1::1:1:1::2:0:0::3:1:0::4:0:0::5:1:0::6:0:0::7:1:3::8:0:6::9:0:3::10:0:0::11:1:3::12:0:1::13:0:1::14:0:2::15:0:1::16:3:2::17:5:3::18:1:2::19:4:2::20:0:2::21:1:1::22:1:1::23:1:1'];
+		   
+function getRiders(station, date){ 
+   if(station=='3069') preprocess(s3069[date]);
+   else preprocess(s3005[date]);
+}
+
+function preprocess(data){
+	data=data.split("::");
+	var valStart=[];
+	var valEnd=[];
+	var hours=[];
+	for(var i=0; i<data.length; i++){
+		var info=data[i].split(":");
+		hours.push(info[0]);
+		valStart.push(info[1]);
+		valEnd.push(info[2]);
+	}
+	riderplot("stationRiders",hours,valStart, valEnd,['# of Riders','Hour']);
+}
+function riderplot(objID, lbls, vals, vale, XYNames){
+      //lbls-array of hours of a day there are riders starting and/or ending in the hours
+	  //vals-number of riders starting in the station over the hours (specified in the lbls)
+	  //vale-number of riders starting in the station over the hours (specified in the lbls)
+	 	 //===========display cumulative new changes of bike at a station over the course of a day
+	 var cum=[]; 
+	 for(var i=0; i<vals.length; i++){
+	 	cum.push(vale[i]-vals[i]);
+		if(i>0)
+		  cum[i] += cum[i-1];
+	 }
+	 var maxVal=vals[0];
+	 var minVal=vals[0];
+	 for(var i=0; i<vals.length; i++){
+		 if(vals[i]>maxVal) maxVal=vals[i];
+		 if(vale[i]>maxVal) maxVal=vale[i];
+		 if(cum[i]>maxVal) maxVal=cum[i];
+		 if(vals[i]<minVal) minVal=vals[i];
+		 if(vale[i]<minVal) minVal=vale[i];
+		 if(cum[i]<minVal) minVal=cum[i];
+	 }
+	 var c=document.getElementById(objID); 
+	 var W=750, H=400, MINH=50;
+	 var WIDTH=W/vals.length;
+	 var scale=(H-MINH)/(maxVal-minVal);       
+	 c.width=W+100;
+	 c.height=H+50;
+	 var ctx=c.getContext("2d");
+	 ctx.strokeText(XYNames[0], 25,30);
+	 ctx.strokeText(XYNames[1], W+50,H+20);
+     
+	 ctx.beginPath();
+	 ctx.strokeText('Number of Riders in Station: '+document.getElementById('station').value, 280,20);
+	 ctx.strokeText('-------Starting', 580,20);
+	 ctx.moveTo(WIDTH, 40);
+	 ctx.lineTo(WIDTH, H+10);
+	 ctx.moveTo(WIDTH, H+10);
+	 ctx.lineTo(W+40, H+10);  
+	 var x=25+WIDTH;
+	 var y=H+50-((vals[0]-minVal)*scale +MINH);
+	 ctx.moveTo(x,y);
+	 ctx.strokeText(lbls[0], x-10,H+20);
+	 ctx.strokeText(vals[0], x-10,y);
+	 for(var i=1; i<vals.length; i++){
+		 x +=WIDTH;
+		 y=H+50-((vals[i]-minVal)*scale +MINH);
+		 ctx.lineTo(x,y);
+		 ctx.strokeText(lbls[i], x-10,H+20);
+		 ctx.strokeText(vals[i], x-10,y);
+	 }
+	 ctx.stroke();
+	 ctx.beginPath();     
+	 //for ending
+	 x=25+WIDTH;
+	 y=H+50-((vale[0]-minVal)*scale +MINH);
+	 ctx.strokeStyle="#FF0000";
+	 ctx.strokeText('-------Ending', 580,40);
+	 ctx.moveTo(x,y);
+	 ctx.strokeText(vale[0], x-10,y);
+	 for(var i=1; i<vale.length; i++){
+		 x +=WIDTH;
+		 y=H+50-((vale[i]-minVal)*scale +MINH);
+		 ctx.lineTo(x,y);
+		 ctx.strokeText(vale[i], x-10,y);
+	 }
+	 ctx.stroke();
+	 ctx.beginPath();
+	 //for ending
+	 x=25+WIDTH;
+	 y=H+50-((cum[0]-minVal)*scale +MINH);
+	 ctx.strokeStyle="#A04000";
+	 ctx.strokeText('-------Cumulative', 580,60);
+	 ctx.moveTo(x,y);
+	 ctx.strokeText(cum[0], x-10,y);
+	 for(var i=1; i<cum.length; i++){
+		 x +=WIDTH;
+		 y=H+50-((cum[i]-minVal)*scale +MINH);
+		 ctx.lineTo(x,y);
+		 ctx.strokeText(cum[i], x-10,y);
+	 }
+	 document.getElementById("transported").innerHTML="";
+	 var net=0;
+	 var count=0;
+	 var tmpVal='', tmpHour='';
+	 for(var i=0; i<cum.length; i++){
+		 if(net+cum[i] !=0){
+			 var needed= -(net + cum[i]);
+			 count++;
+			 net += needed;
+			 tmpVal +="<td>"+needed+"</td>";
+			 tmpHour +="<td>"+lbls[i]+"</td>";
+		 }
+	 }
+	 tmpVal = "<tr><td># of Bikes</td>"+tmpVal+"</tr>";
+	 tmpHour = "<tr><td>Hour of the day</td>"+tmpHour+"</tr>";
+	 var tmp="<tr><th colspan='"+(count+1)+"' width='750px'>Bike Transported to Match Travel Patterns <img src='images/hint.ico' "+
+	 "title='Assume there are zero inventory of bikes in the station, The following table shows the number of bikes\n"+
+	 "needs to be tranported to the station: positive number means tranported to the station; \n"+
+	 "a negative number means the number of bikes can be taken away from the station.'></th></tr>"+tmpHour+tmpVal;
+	 tmp = "<table cellspacing='0' cellpadding='0'>"+tmp +"</table>";
+         document.getElementById("transported").innerHTML=tmp;
+	 ctx.stroke(); 
+}
+
+setTimeout(getRiders, 100,'3069', 0);
+</script>
+</head> 
+<body>
+<h2><a href='datavisuals.html'>Data Visuals</a> | <a href='stationpopular.html'>Popular Stations</a> | <a href='averagedistance.html'>Average Distance</a> | <a href='commute.html'>Commute with Bikeshare</a> | Net Change of Bikes</h2>
+
+<hr size='2px'>
+<div class='data'>Net Changes of Bikes over the Course of a Day in the Most Popular Station<br /><br />
+<select id='station'>
+  <option value='3069'>The most popular starting station[3069]</option>
+  <option value='3005'>The most popular ending station[3005]</option>
+  </select>
+ <select id='date' title='Two days were selected for demonstration'>
+ 	<option value='0'>2016-08-17</option>
+    <option value='1'>2016-08-18</option>
+ </select>
+
+<input type='button' value='Compile Data' style='font-size:22px' onclick="getRiders(document.getElementById('station').value, document.getElementById('date').value)"><br /><br />
+<div id='prog' style="display:none"><h3>Please wait! I am working hard to retrieve the data. <progress></progress></h3></div>
+
+<canvas id="stationRiders" ></canvas>
+<div id='res'>Note: The <font style='color:#A04000;font-weight:bolder'>brown line</font> indicates the cumulated net change of the bike in the station. <br />
+A positive number means bikes accumulates in the station.<br />
+A negative number means the inventory of bikes in the station is reduced.<br />
+<div id='transported'>ttt</div></div>
+</body>
+</html>
+
+
+
+<style>
+  #stationRiders{
+		position:absolute;
+		top:190px;
+		left:60px;
+		border:1px solid #d3d3d3;
+	}
+  select{
+    font-size:25px;
+    color:blue;
+    font-weight:bold;
+  }
+  .data{
+	  font-size:25px;
+	  color: black;
+  }
+  .info{
+	  font-size:20px;
+	  color:red;
+	  text-decoration:underline;
+  }
+  #res{
+	  font-size:16px;
+	  position:absolute;
+	  top:650px;
+      left:60px;
+  }
+  table th, td{
+	  border-bottom:1px solid;
+  }
+</style>

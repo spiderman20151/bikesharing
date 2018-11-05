@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META HTTP-EQUIV="expires" CONTENT="0">
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
+<title>Bike Share</title>
+
+<script>
+var seasons=["All Seasons","Spring","Summer","Fall","Winter"];
+var passHolder=['All passholder types','Flex Pass','Monthly Pass','Staff Annual','Walk-up'];
+var routeCat=['Both One Way and Round Trip','One Way', 'Round Trip'];
+//data were retrieved with ths file tester-riderByMonth.jsp
+//Data can be retrieve dynamically, but it takes about 45seconds to retrieve 
+var riders=[11421,24154,19867,18160,14431,10614,10348,9534,13907]; 
+var months=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+
+
+
+function riderplot(objID, lbls, vals, XYNames){	 //alert(dataOri); alert(lblName); alert(names);
+	 var maxVal=vals[0];
+	 var minVal=vals[0];
+	 for(var i=0; i<vals.length; i++){
+		 if(vals[i]>maxVal) maxVal=vals[i];
+		 if(vals[i]<minVal) minVal=vals[i];
+	 }
+	 var c=document.getElementById(objID); 
+	 var W=450, H=200, MINH=50;
+	 var WIDTH=W/vals.length;
+	 var scale=(H-MINH)/(maxVal-minVal);
+	 c.width=W+100;
+	 c.height=H+50;
+	 var ctx=c.getContext("2d");
+	 ctx.strokeText(XYNames[0], 25,30);
+	 ctx.strokeText(XYNames[1], W+50,H+20);
+     
+	 ctx.beginPath();
+	 ctx.moveTo(WIDTH, 40);
+	 ctx.lineTo(WIDTH, H+10);
+	 ctx.moveTo(WIDTH, H+10);
+	 ctx.lineTo(W+40, H+10);
+	 var x=25+WIDTH;
+	 var y=H+50-((vals[0]-minVal)*scale +MINH);
+	 ctx.moveTo(x,y);
+	 ctx.strokeText(lbls[0], x-10,H+20);
+	 ctx.strokeText(vals[0], x-10,y);
+	 for(var i=1; i<vals.length; i++){
+		 x +=WIDTH;
+		 y=H+50-((vals[i]-minVal)*scale +MINH);
+		 ctx.lineTo(x,y);
+		 ctx.strokeText(lbls[i], x-10,H+20);
+		 ctx.strokeText(vals[i], x-10,y);
+	 }
+	 
+	 ctx.strokeText('2016', 180,H+40);
+	 ctx.strokeText('2017', 380,H+40);
+	 ctx.strokeText('Number of Riders in Each Month', 180,20);
+	 ctx.stroke();
+}
+
+setTimeout(riderplot,100,'riderByMonth',months, riders,['# of Riders','Month']);
+</script>
+</head> 
+<body>
+<h2>Data Visuals | <a href='stationpopular.html'>Popular Stations</a> | <a href='averagedistance.html'>Average Distance</a> | <a href='commute.html'>Commute with Bikeshare</a>|<a href='stationanalysis.html'>Net Change of Bikes</a></h2>
+<hr size='2px'>
+<canvas id="riderByMonth" ></canvas>
+
+<table id='table1'>
+<tr><th colspan='3' title='Negative net change means there are more riders leaving this station
+than coming to the station. Therefore, without "refilling" bikes to the station,
+there will be no bikes at some point.'>Top 10 Stations with Negative Net Change of Bikes <img src='images/hint.ico' /></th></tr>
+<tr><th>No.</th><th>Stationd ID</th><th>New Changes</th></tr>
+<tr><td>1</td><td>3068</td><td>-2269</td></tr><tr><td>2</td><td>3024</td><td>-886</td></tr><tr><td>3</td><td>3030</td><td>-835</td></tr><tr><td>4</td><td>3055</td><td>-810</td></tr><tr><td>5</td><td>3007</td><td>-792</td></tr><tr><td>6</td><td>3052</td><td>-756</td></tr><tr><td>7</td><td>3027</td><td>-696</td></tr><tr><td>8</td><td>3049</td><td>-665</td></tr><tr><td>9</td><td>3028</td><td>-658</td></tr><tr><td>10</td><td>3029</td><td>-503</td></tr>
+</table>
+
+<table id='table2'>
+<tr><th colspan='3' title='Positive net change means more bikes will be accumulated at the station overtime'>Top 10 Stations with Positive Net Change of Bikes<img src='images/hint.ico' /></th></tr>
+<tr><th>No.</th><th>Stationd ID</th><th>New Changes</th></tr>
+<td>1</td><td>3005</td><td>1379</td></tr><tr><td>2</td><td>3042</td><td>1278</td></tr><tr><td>3</td><td>3000</td><td>926</td></tr><tr><td>4</td><td>3031</td><td>888</td></tr><tr><td>5</td><td>3014</td><td>814</td></tr><tr><td>6</td><td>3063</td><td>814</td></tr><tr><td>7</td><td>3082</td><td>795</td></tr><tr><td>8</td><td>3023</td><td>515</td></tr><tr><td>9</td><td>3022</td><td>444</td></tr><tr><td>10</td><td>3032</td><td>312</td></tr>
+</table>
+</body>
+</html>
+
+
+
+<style>
+  #table1{
+	  position:absolute;
+	  top:380px;
+	  left:120px;
+  }
+  #table1 td, #table2 td{
+	  text-align:center;
+  }
+  #table2{
+	  position:absolute;
+	  top:680px;
+	  left:120px;
+  }
+  #riderByMonth{
+		position:absolute;
+		top:100px;
+		left:120px;
+		border:1px solid #d3d3d3;
+		//display:none;
+	}
+  .data{
+	  font-size:25px;
+	  color: black;
+  }
+  .info{
+	  font-size:20px;
+	  color:red;
+	  text-decoration:underline;
+  }
+  #res{
+	  font-size:30px;
+  }
+</style>
